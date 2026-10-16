@@ -1,0 +1,48 @@
+import os
+import time
+
+SHEETS = """
+( i p d f j p d f h p d f j p d f
+i p d f j p d f h p d f j p d f
+[4ql] k j f s [4q] a p o I I I
+
+"""
+
+
+time.sleep(0)
+
+
+TEMPO = 0.23
+
+def send_note(key):
+    if key.isupper() or key in '!@#$%^&*()_':
+        os.system(f"xdotool key Shift+{key.lower()}")
+    else:
+        os.system(f"xdotool key {key}")
+
+i = 0
+length = len(SHEETS)
+
+while i < length:
+    char = SHEETS[i]
+    
+    if char == '[':
+        chord = ""
+        i += 1
+        while i < length and SHEETS[i] != ']':
+            chord += SHEETS[i]
+            i += 1
+        
+        for note in chord:
+            send_note(note)
+            time.sleep(0.01)
+        time.sleep(TEMPO)
+        
+    elif char in [' ', '\n', '\r', '-']:
+        pass
+        
+    else:
+        send_note(char)
+        time.sleep(TEMPO)
+        
+    i += 1
