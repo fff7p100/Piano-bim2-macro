@@ -1,0 +1,122 @@
+import os
+import time
+
+SHEETS = """
+[4q]. [eyu],
+[1w]. [ryu],
+4 8 q e  y u,
+1 5 0 r y [ud] f
+
+<4z 8 q e yL l uk>.
+1 5 0 r <yj uh> d f
+
+<4z 8 q e yL l uk. <l
+1k> 5 0 r y u d f
+
+<4z 8 q e yL l uk>.
+1 5 0 r <yj uh> d f
+
+<4z 8 q e yL l uk. <x
+1k> 5 0 r y u.
+
+4j 8 qf,
+5d 9 wh,
+4j 8 qf,
+5k 9 wh,
+4j 8 qf,
+5d 9 wh,
+
+%l Wh,
+g9 qh,
+
+4 8 q e y u.
+1 5 0 r y u.
+4 8 q e y u.
+1 5 0 r y ud f
+
+<4z 8 q e yL l uk>.
+1 5 0 r <yj uh> d f
+
+<4z 8 q e yL l uk. <x
+1k> 5 0 r y u.
+
+4j 8 qf.
+5d 9 wh.
+
+%l Wh.
+g 9 qh.
+
+4 8 q e  y u
+"""
+
+time.sleep(0)
+
+PAUSE_COMMA = 0.87        
+PAUSE_DOT = 0.87          
+CHORD_DELAY = 0.35         
+INSIDE_CHORD_SPEED = 0.06 
+
+
+FAST_DELAY = 0.25        
+VERY_FAST_DELAY = 0.21    
+
+def send_note(key):
+    if key.isupper() or key in '!@#$%^&*()_':
+        os.system(f"xdotool key Shift+{key.lower()}")
+    else:
+        os.system(f"xdotool key {key}")
+
+def process_sheet(text, default_delay):
+    i = 0
+    length = len(text)
+    
+    while i < length:
+        char = text[i]
+        
+        
+        if char == '<':
+            sub_text = ""
+            i += 1
+            while i < length and text[i] != '>':
+                sub_text += text[i]
+                i += 1
+            process_sheet(sub_text, FAST_DELAY)
+
+        elif char == '^':
+            sub_text = ""
+            i += 1
+            while i < length and text[i] != '^':
+                sub_text += text[i]
+                i += 1
+            process_sheet(sub_text, VERY_FAST_DELAY)
+
+        
+        elif char == '[':
+            chord = ""
+            i += 1
+            while i < length and text[i] != ']':
+                chord += text[i]
+                i += 1
+            
+            for note in chord:
+                send_note(note)
+                time.sleep(INSIDE_CHORD_SPEED)
+                
+            time.sleep(default_delay)
+
+        elif char == ',':
+            time.sleep(PAUSE_COMMA)
+
+        elif char == '.':
+            time.sleep(PAUSE_DOT)
+
+        elif char in [' ', '\n', '\r']:
+            pass
+            
+        else:
+            send_note(char)
+            time.sleep(default_delay)
+            
+        i += 1
+
+process_sheet(SHEETS, CHORD_DELAY)
