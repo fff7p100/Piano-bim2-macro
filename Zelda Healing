@@ -1,0 +1,77 @@
+import os
+import time
+
+SHEETS = """
+qa] t p t i t
+[qa] t p t i t
+[qa] t p t u [yt]
+[u0] r|r|r
+[qa] t p t i t
+[qa] t p t i t
+[qa] t p t u [yt]
+[0u] r|r|r
+[9i] e t e r e
+[9i] e t e r e
+[8i] w u w r [we]
+[8r] w|w|w
+[9i] e t e r e
+[9i] e t e r e
+[8i] w u w [ua] w
+[8uo] w|w|w
+[^ip] q [Eip] q [yip] q
+[^pd] q [Epd] q [ypd]|
+[6uo] 0 [uoe] 0 [uto] 0
+[6us] 0 [wuo] 0 t|
+[6yi] 9 [yqi] 9 [Eyi] 9
+[6Pu] 9 [Puq] 9 [PEu]|
+[4tu] 8 [0ty] 8 [tpe] 0
+[4tu] 8 0 8 e|
+[^ip] q [Eip] q [yip] q
+[^pd] q [Epd] q [ypd]|
+[6uo] 0 [euo] 0 [tuo] 0
+[6us] 0 [wuo] 0 t|
+[7iy] q [yoe] q [yp] q
+[7ua] q [usr] q [yud] q
+[7ip] q [iea] q [yid] e
+[0uf]|r|u
+"""
+
+
+time.sleep(0)
+
+TEMPO = 0.30
+
+def send_note(key):
+    if key.isupper() or key in '!@#$%^&*()_':
+        os.system(f"xdotool key Shift+{key.lower()}")
+    else:
+        os.system(f"xdotool key {key}")
+
+i = 0
+length = len(SHEETS)
+
+while i < length:
+    char = SHEETS[i]
+    
+  
+    if char == '[':
+        chord = ""
+        i += 1
+        while i < length and SHEETS[i] != ']':
+            chord += SHEETS[i]
+            i += 1
+        
+        for note in chord:
+            send_note(note)
+        time.sleep(TEMPO)
+
+    
+    elif char in [' ', '|', '\n', '\r']:
+        pass
+
+   
+    else:
+        send_note(char)
+        time.sleep(TEMPO)
+        
+    i += 1
