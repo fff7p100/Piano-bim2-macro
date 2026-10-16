@@ -1,0 +1,107 @@
+import os
+import time
+
+SHEETS = """
+{9qe 9qr qey eyi yip yia}
+[xq] [je] [ge] [ud] z j g d
+L [je] [ug] [yd] [zo] [uj] [yg] [ed]
+[z0] [wh] [wf] [ys] l h f s
+[k0] [h0] [yf] [ts] [ol] [yh] [tf] [ws]
+[l9] [qg] [qd] [ta] k g d a
+[J9] [tg] [td] [ra] [yk] [rg] [wd] [qa]
+[k8] [f0] [s0] [rp] j f s p
+[H8] [rf] [sr] [pe] [yj] [of] [so] [pi]
+[xq] [je] [ge] [ud] z j g d
+[qL] [uj] [ug] [yd] [zp] [ji] [yg] [ed]
+[c0] [wJ] [wh] [oS] x J h S
+[eZ] [eJ] [oh] [uS] [xP] [pJ] [oh] [uS]
+[v9] [je] [ge] [id] c j g d
+[x9] [qj] [ig] [ud] [oc] [ji] [yg] [ed]
+[xw] [yg] [yd] [ia] z g d a
+[wl] [ig] [id] [ya] [ka] [ig] d a
+[xq] [je] [ge] [ud] z j g d
+L [je] [ug] [yd] [zo] [uj] [yg] [ed]
+[z0] [wh] [wf] [ys] l h f s
+[k0] [h0] [yf] [ts] [ol] [yh] [tf] [ws]
+[l9] [qg] [qd] [ta] k g d a
+[J9] [tg] [td] [ra] [yk] [rg] [wd] [qa]
+[k8] [f0] [s0] [rp] j f s p
+[H8] [rf] [sr] [pe] [yj] [of] [so] [pi]
+[xq] [je] [ge] [ud] z j g d
+[qL] [uj] [ug] [yd] [zp] [ji] [yg] [ed]
+[c0] [wJ] [wh] [oS] x J h S
+[eZ] [eJ] [oh] [uS] [xP] [pJ] [oh] [uS]
+[v9] [je] [ge] [id] c j g d
+[x9] [qj] [ig] [ud] [oc] [ji] [yg] [ed]
+[xw] [yg] [yd] [ia] z g d a
+[wl] [ig] [id] [ya] [ka] [ig] d a
+[xq] [je] [ge] [ud] z j g d
+L [je] [ug] [yd] [zo] [uj] [yg] [ed]
+"""
+
+time.sleep(0)
+
+TEMPO = 0.24       
+SLOW_TEMPO = 0.28  
+
+def send_note(key):
+    if key.isupper() or key in '!@#$%^&*()_':
+        os.system(f"xdotool key Shift+{key.lower()}")
+    else:
+        os.system(f"xdotool key {key}")
+
+i = 0
+length = len(SHEETS)
+
+while i < length:
+    char = SHEETS[i]
+    
+    # Manejo de acordes normales [ ]
+    if char == '[':
+        chord = ""
+        i += 1
+        while i < length and SHEETS[i] != ']':
+            chord += SHEETS[i]
+            i += 1
+        
+        for note in chord:
+            send_note(note)
+        time.sleep(TEMPO)
+
+    # NUEVO: Manejo de sección lenta con llaves { }
+    elif char == '{':
+        slow_section = ""
+        i += 1
+        while i < length and SHEETS[i] != '}':
+            slow_section += SHEETS[i]
+            i += 1
+        
+        # Procesamos cada carácter dentro de las llaves con SLOW_TEMPO
+        j = 0
+        s_len = len(slow_section)
+        while j < s_len:
+            s_char = slow_section[j]
+            if s_char == '[': # Por si pones acordes dentro de la parte lenta
+                sub_chord = ""
+                j += 1
+                while j < s_len and slow_section[j] != ']':
+                    sub_chord += slow_section[j]
+                    j += 1
+                for note in sub_chord:
+                    send_note(note)
+                time.sleep(SLOW_TEMPO)
+            elif s_char in [' ', '|', '\n', '\r']:
+                pass
+            else:
+                send_note(s_char)
+                time.sleep(SLOW_TEMPO)
+            j += 1
+
+    elif char in [' ', '|', '\n', '\r']:
+        pass
+
+    else:
+        send_note(char)
+        time.sleep(TEMPO)
+        
+    i += 1
